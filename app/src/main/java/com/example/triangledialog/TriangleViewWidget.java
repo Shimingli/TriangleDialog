@@ -6,12 +6,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 
 /**
  * @author shiming
  * @time 2017/5/31 11:25
- * @desc  用笔画一个三角形的形状
+ * @desc  用笔画一个三角形的形状 而且是闭合的三角形，但是这个箭头 目前我就画了两个方向  一个向上  一个向下
  */
 
 public class TriangleViewWidget extends View {
@@ -19,6 +20,8 @@ public class TriangleViewWidget extends View {
 
     private Paint mPaint;
     private Path mPath;
+    private int mColorBg;
+    private int mGravity;
 
     /**
      * 为什么自定空间必须重写了2个方法？
@@ -66,7 +69,14 @@ public class TriangleViewWidget extends View {
         //路径
         mPath = new Path();
     }
-
+    public void setBg(int color){
+        mColorBg = color;
+        invalidate();
+    }
+    public void setGravity(int gravity){
+        mGravity = gravity;
+        invalidate();
+    }
 
     /**
      *
@@ -82,21 +92,28 @@ public class TriangleViewWidget extends View {
 //    java.lang.Long.parseLong(String s, int radix) 方法解析一个指定的第二个参数基数为基数有符号的long的字符串参数s。在这里可以看到一些例子：
         int i = Color.parseColor("#BBff0000");
         System.out.println("shiming" + i);
-        mPaint.setColor(i);
+        mPaint.setColor(mColorBg);
         /** Restores the paint to its default settings. */
         mPaint.reset();
-        /*设置paint的　style　为STROKE：空心*/
-        mPaint.setStyle(Paint.Style.STROKE);
+//        /*设置paint的　style　为STROKE：空心*/
+//        mPaint.setStyle(Paint.Style.STROKE);
 
         /*设置paint 的style为 FILL：实心*/
         mPaint.setStyle(Paint.Style.FILL);
-        //画三角形的头部,确定路径
-        mPath.moveTo(width/2,0);
-        mPath.lineTo(0,height);
-        mPath.lineTo(width,height);
-        //*关闭当前的轮廓。if the current（is not equal to the
-        //*第一点of the轮廓，线段是自动添加的。
-        mPath.close();
+        if (mGravity== Gravity.TOP) {
+            //画三角形的头部,确定路径
+            mPath.moveTo(width / 2, 0);
+            mPath.lineTo(0, height);
+            mPath.lineTo(width, height);
+            //*关闭当前的轮廓。if the current（is not equal to the
+            //*第一点of the轮廓，线段是自动添加的。
+            mPath.close();
+        }else if(mGravity==Gravity.BOTTOM){
+            mPath.moveTo(0,0);
+            mPath.lineTo(width, 0);
+            mPath.lineTo(width / 2, height);
+            mPath.close();
+        }
         canvas.drawPath(mPath,mPaint);
     }
 }
